@@ -1,4 +1,4 @@
-\section{Measurement Report}
+\utsubsection{Measurement Report}{Max Eschenbacher}
 Measurement Reports enthalten Messwerte bzgl. der Empfangsleistung, Empfangsqualität und Informationen zu Nachbarzellen. Sie werden beim Einbuchen in das Netzwerk und während eines Gesprächs (ca. 2 mal in der Sekunde) von der MS an die BTS gesandt. Measurement Reports sind im RR-Sublayer (Radio Resource) angesiedelt und mit dem Nachrichtentyp \textit{MEASUREMENT REPORT} gekennzeichnet. Die Messwerte sind für das Weiterreichen (Handover) der MS von großer Bedeutung.
 
 OpenBTS verwaltet diese Messwerte intern in einer eigenen Klasse, bietet aber auch die Möglichkeit, diese in eine externe SQL-DB abzulegen. Mit der Option \verb|Control.Reporting.PhysStatusTable| kann der Pfad der Datenbank angegeben werden:

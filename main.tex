@@ -32,7 +32,7 @@
   plainpages=false,
   unicode=true,          % non-Latin characters in Acrobat?s bookmarks
   pdftitle=,
-  pdfauthor=Thomas\ Waldecker,
+  pdfauthor=GSM OpenBTS Handover Action Group,
   pdftoolbar=true,        % show Acrobat?s toolbar?
   pdfmenubar=true,        % show Acrobat?s menu?
   pdffitwindow=true,     % window fit to page when opened
@@ -69,7 +69,14 @@
 \lstloadlanguages{PHP, XML, HTML}
 \DeclareCaptionFont{white}{\color{white}}
 \DeclareCaptionFormat{listing}{\colorbox[cmyk]{0.43, 0.35, 0.35,0.01}{\parbox{\textwidth}{\hspace{15pt}#1#2#3}}}
-\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white, singlelinecheck=false, margin=0pt, font={bf,footnotesize}}		
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white, singlelinecheck=false, margin=0pt, font={bf,footnotesize}}
+
+\newcommand{\utsection}[2]{%Section mit Untertitel (ut)
+    \section[#1]{#1\newline\normalfont\small\textit{Von: #2}}
+}
+\newcommand{\utsubsection}[2]{%Subsection mit Untertitel (ut)
+    \subsection[#1]{#1\newline\normalfont\small\textit{Von: #2}}
+}	
 		
 %% spezielles Zeug
 \usepackage{Abschlussarbeit}

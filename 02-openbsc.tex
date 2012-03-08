@@ -1,7 +1,13 @@
 \utsection{Handover mit OpenBSC}{Stefan Giggenbach}\label{sec:openbsc}
 
+Bei OpenBSC handelt es sich wie bei OpenBTS um Open Source Software. Der Vorteil von OpenBSC liegt in der network in the box (nitb) genannten Version, die ohne zusätzliche Software-Komponenten den Betrieb eines GSM-Netzwerks ermöglicht. Es wird lediglich eine unterstützte BTS-Hardware benötigt. Im Projekt werden zwei nanoBTS der Firma ip.access verwendet. Abbildung zeigt die Architektur des eingesetzten Systems.
 
 
-\subsection{Inbetriebnahme}
+
+OpenBSC übernimmt nicht nur die Funktion des BSC sondern auch die des MSC. Die Teilnehmer Datenbanken HLR und VLR werden mit einer SQLite3 Datenbank realisiert. Durch die Anbindung von zwei nanoBTS über die Abis-over-IP-Schnittstelle ist die Durchführung eines Intra BSC Handover mit geringen Installations- und Konfigurationsauswand möglich.
+
+\subsection{Installation und Konfiguration}
+
+Die Installation von OpenBSC ist im Wiki des Projekts Schritt für Schritt Dokumentiert. In diesem Abschnitt werden deshalb nur die wichtigsten Punkte der Installation und die Konfiguration für den Multi-BTS-Betrieb behandelt.
 
 

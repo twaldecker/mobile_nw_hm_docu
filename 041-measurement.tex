@@ -1,0 +1,71 @@
+\utsubsection{Measurement Report}{Max Eschenbacher}
+Measurement Reports enthalten Messwerte bzgl. der Empfangsleistung, Empfangsqualität und Informationen zu Nachbarzellen. Sie werden beim Einbuchen in das Netzwerk und während eines Gesprächs (ca. 2 mal in der Sekunde) von der MS an die BTS gesandt. Measurement Reports sind im RR-Sublayer (Radio Resource) angesiedelt und mit dem Nachrichtentyp \textit{MEASUREMENT REPORT} gekennzeichnet. Die Messwerte sind für das Weiterreichen (Handover) der MS von großer Bedeutung.
+
+OpenBTS verwaltet diese Messwerte intern in einer eigenen Klasse, bietet aber auch die Möglichkeit, diese in eine externe SQL-DB abzulegen. Mit der Option \verb|Control.Reporting.PhysStatusTable| kann der Pfad der Datenbank angegeben werden:
+\begin{verbatim}
+OpenBTS> config Control.Reporting.PhysStatusTable \
+/etc/OpenBTS/phystatus.db
+\end{verbatim}
+
+Leider werden keinerlei Informationen bzgl. der Nachbarzellen in die Datenbank eingetragen. Deshalb musste die entsprechende Tabelle der Datenbank um weitere Felder für die Nachbarzellen erweitert und die Methode \verb|PhysicalStatus::setPhysical()| angepasst werden.
+Zusätzlich wurde ein neuer CLI-Befehl namens \verb|showmr| implementiert, welcher den Inhalt der Measurement Report DB entsprechend formatiert und auflistet.
+
+\newpage
+Beispielausgabe von \verb|showmr|:
+\begin{figure}[ht]
+\setbox0\vbox{\small
+\begin{verbatim}
+OpenBTS> showmr
+############################################################
+                Measurement Report:
+############################################################
+CN_TN_TYPE_OFFSET               =       C0T0 SDCCH/4-0
+ARFCN                           =       867
+ACCESSED                        =       1330702677
+RSSI                            =       -63.750000
+TIME_ERR                        =       -0.222656
+TIME_ADVC                       =       1
+TRANS_PWR                       =       30 dBm
+FER                             =       0.000000
+RXLEV_FULL_SERVING_CELL         =       -48 dBm
+RXLEV_SUB_SERVING_CELL          =       -48 dBm
+RXQUAL_FULL_SERVING_CELL_BER    =       0.181000 dBm
+RXQUAL_SUB_SERVING_CELL_BER     =       0.181000 dBm
+NO_NCELL                        =       1
+RXLEV_CELL_1 = 0, BCCH_FREQ_CELL_1 = 0, BSIC_CELL_1 = 0
+RXLEV_CELL_2 = 0, BCCH_FREQ_CELL_2 = 0, BSIC_CELL_2 = 0
+RXLEV_CELL_3 = 0, BCCH_FREQ_CELL_3 = 0, BSIC_CELL_3 = 0
+RXLEV_CELL_4 = 0, BCCH_FREQ_CELL_4 = 0, BSIC_CELL_4 = 0
+RXLEV_CELL_5 = 0, BCCH_FREQ_CELL_5 = 0, BSIC_CELL_5 = 0
+RXLEV_CELL_6 = -33, BCCH_FREQ_CELL_6 = 63, BSIC_CELL_6 = 1
+############################################################
+CN_TN_TYPE_OFFSET               =       C0T1 TCH/F
+ARFCN                           =       867
+ACCESSED                        =       1330696371
+RSSI                            =       -57.250000
+TIME_ERR                        =       0.263672
+TIME_ADVC                       =       1
+TRANS_PWR                       =       30 dBm
+FER                             =       0.042869
+RXLEV_FULL_SERVING_CELL         =       -48 dBm
+RXLEV_SUB_SERVING_CELL          =       -48 dBm
+RXQUAL_FULL_SERVING_CELL_BER    =       0.000000 dBm
+RXQUAL_SUB_SERVING_CELL_BER     =       0.000000 dBm
+NO_NCELL                        =       7
+RXLEV_CELL_1 = 0, BCCH_FREQ_CELL_1 = 0, BSIC_CELL_1 = 0
+RXLEV_CELL_2 = 0, BCCH_FREQ_CELL_2 = 0, BSIC_CELL_2 = 0
+RXLEV_CELL_3 = 0, BCCH_FREQ_CELL_3 = 0, BSIC_CELL_3 = 0
+RXLEV_CELL_4 = 0, BCCH_FREQ_CELL_4 = 0, BSIC_CELL_4 = 0
+RXLEV_CELL_5 = 0, BCCH_FREQ_CELL_5 = 0, BSIC_CELL_5 = 0
+RXLEV_CELL_6 = 0, BCCH_FREQ_CELL_6 = 0, BSIC_CELL_6 = 0
+
+############################################################
+\end{verbatim}
+}
+\centerline{\fbox{\box0}}
+\end{figure}
+\newpage
+
+\underline{Erläuterungen zur Beispielausgabe}
+
+Der erste Measurement Report wurde um \verb|1330702677| (Unix-Time, entspricht 02.03.2012 - 16:37:57 Realzeit) im \verb|SDCCH| (\textit{Standalone Dedicated Control Channel}) mit der Nummer 0 (von 4 Möglichen) auf der \verb|ARFCN 867| gesendet. Die empfangene Signalstärke (\verb|RSSI = Received Signal Strength Indication|) betrug \verb|-63.75 dBm|. Der zugeordnete Timing Advance Parameter der MS betrug 1 Symbolperiode und wies einen Fehler (\verb|TIME_ERR|), d.h. Zeitversatz von \verb|-0.222656| Symbolperioden auf. Die Sendeleistung der MS betug \verb|30 dBm| und hatte bis dato eine \verb|Uplink-FER| (= Frame Erasure Rate; gibt das Verhältnis zwischen gelöschten Frames und der Gesamtanzahl der Frames an) von \verb|0|. Der Empfangspegel der verwendeten Zelle (\verb|RXLEV_FULL_SERVING_CELL|) betrug \verb|-48 dBm| und die Empfangsqualität \verb|RXQUAL_FULL_SERVING_CELL_BER = 0.181000 dBm|. Die Angaben \verb|SUB| und \verb|FULL| bei der Empfangsleistung und -qualität beziehen sich auf die Verwendung von DTX (Discontinuous Transmission). \verb|FULL| bezieht dabei alle Frames mit ein, also auch die zu dessen Zeit keine Sprache gesendet wurde. \verb|SUB| hingegen nur die effektiven "`Sprachframes"'. Da jeweils beide Werte im obigen Beispiel gleich sind, kann man davon ausgehen das kein DTX verwendet wurde. Die restlichen Angaben beziehen sich auf die Nachbarzellen. \verb|NO_NCELL| gibt die Anzahl der sichbaren Nachbarzellen an. Dabei gibt es zwei Sonderfälle: \verb|NO_NCELL=0| - es existieren keine Messwerte, \verb|NO_NCELL=7| - es existieren keine Nachbarzellen. Im obigen Beispiel sieht die MS 1 Nachbarzelle (Nr. 6) mit einer Empfangsleistung von \verb|-33 dBm|. 

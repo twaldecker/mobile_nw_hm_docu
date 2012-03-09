@@ -4,18 +4,24 @@ Gliederung Ausarbeitung
 1.1 GSM Handover                  S
 1.2 Projektziel und durchführung  S
                                   
-2. Handover mit OpenBSC           
-2.1 Inbetriebnahme                S
-2.2 Analyse                       T
+2. Handover mit OpenBSC
+2.1 Überblick			  S
+2.2 Inbetriebnahme                S
                                   
 3. OpenBTS                        M
 3.1 Überblick                     M
 3.2 Architektur                   M
 3.3 Inbetriebnahme                M
                                   
-4. Erweiterung von OpenBTS        
-4.1 Measurement Reports           M
-4.2 Handover Modul                S
-4.3 Inter OpenBTS Verbindung      T
+4. OpenBTS Softwarearchitektur	  
+4.1 Überblick			  S
+4.2 GSM-Modul			  S
+
+5. Erweiterung von OpenBTS        
+5.1 Measurement Reports           M
+5.2 Handover Modul                S
+(5.3 Inter OpenBTS Verbindung      T)
+
+6. Analyse                        T
                                   
-5. Zusammenfassung                T
+7. Zusammenfassung                T

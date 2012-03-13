@@ -2,7 +2,9 @@
 
 \subsection{Vorbereitung}
 \subsubsection{Tracen auf dem Um Interface mit einem Nokia 3310}
-Das Um Interface kann mit einem Nokia 3310 Mobiltelefon mit einem Adapter der zwischen den Akku und dem Telefon gesteckt wird und auf 4 Kontakte des FBus??.
+Das Um Interface kann mit einem Nokia 3310 Mobiltelefon und einem dazugehörigen Adapter, der zwischen den Akku und das Telefon gesteckt wird und auf die vier Kontakte des internen Telefonbus zugreift getraced werden.
+
+Im Adapterkabel ist ein USB-zu-Seriell Wandler integriert. In die Konfigurationsdatei muss deshalb das Device des USB-Seriell Wandlers eingetragen werden (Siehe Listing \ref{config:gammu}).
 
 \begin{lstlisting}[label=config:gammu,caption={Konfigurationsdatei für gammu und dem verwendeten Adapter}]
 [gammu]
@@ -16,6 +18,8 @@ logformat = nothing
 use_locking = yes
 gammuloc = 
 \end{lstlisting}
+
+Das Tracen kann nach der weiteren Konfiguration, die in \cite{bib:nokiagammu} beschrieben ist mit folgenden Kommando gestartet werden (Listing \ref{command:gammu}).
 
 \begin{lstlisting}[label=command:gammu,caption={Aufruf von Gammu}]
 sudo gammu --nokiadebug nhm5_587.txt v20-25,v18-19
@@ -31,6 +35,8 @@ t=0002 nr=0f: D 05: 1e 0c 00 40 00 06 01 01 70 01 01 47
 <198E> MDI:d2m/FROM_FBUS_TO_MCU
 t=0003 nr=10: D 8E: 1e 00 0c 7f 00 02 40 07 
 \end{lstlisting}
+
+\subsubsection{Patchen von Wireshark}
 
 \subsection{Intra BSC Handover mit OpenBSC und zwei nanoBTS}
 

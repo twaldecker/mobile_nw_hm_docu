@@ -1,8 +1,8 @@
 %% Standard-Vorspann
-\documentclass[a4paper,11pt,oneside]{article}
-\usepackage{ngerman}                   
+\documentclass[a4paper,11pt,oneside]{scrartcl}
+\usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage[T1]{fontenc} 
 \usepackage[fleqn]{amsmath}
 
 %% Auf Schriftart Palatino umschalten
@@ -47,6 +47,10 @@
   bookmarks,
 ]{hyperref}
 
+%http://en.wikibooks.org/wiki/LaTeX/Glossary
+\usepackage[toc,nonumberlist]{glossaries}
+
+
 %Konfigutation für Codelisting
 %see: http://stackoverflow.com/questions/741985
 \lstset{
@@ -60,7 +64,7 @@
 	stringstyle=\ttfamily, % Farbe der String
 	showspaces=false,           % Leerzeichen anzeigen ?
 	showtabs=false,             % Tabs anzeigen ?
-	xleftmargin= 17pt,
+	xleftmargin=17pt,
 	framexleftmargin=17pt,
 	framexrightmargin=5pt,
 	framexbottommargin=4pt,
@@ -83,6 +87,13 @@
 
 %% Index erzeugen
 \makeindex
+\makeglossaries
+
+\newacronym{bts}{BTS}{Base Transceiver Station}
+\newacronym{bsc}{BSC}{Base Station Controller}
+\newacronym{msc}{MSC}{Mobile Switching Center}
+\newacronym{sacch}{SACCH}{Slow Associated Control Channel}
+
 
 %% jetzt geht's los
 \begin{document}
@@ -104,10 +115,5 @@
 %% Beim Anhang gibt es eine Musterdatei, die 
 %% ergänzt werden kann
 \include{99-anhang}
-
-
-%% Stichwortverzeichnis ausgeben.
-%% falls nicht notwendig, die folgende Zeile loeschen
-\printindex
 
 \end{document}

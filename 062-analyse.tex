@@ -1,7 +1,7 @@
 \utsection{Analyse}{Thomas Waldecker}\label{sec:analyse}
 
 \subsection{Vorbereitung}
-\subsubsection{Tracen auf dem Um Interface mit einem Nokia 3310}
+\subsubsection{Tracen auf dem Um Interface mit einem Nokia 3310}\label{sec:umtrace}
 Das Um Interface kann mit einem Nokia 3310 Mobiltelefon und einem dazugehörigen Adapter, der zwischen den Akku und das Telefon gesteckt wird und auf die vier Kontakte des internen Telefonbus zugreift getraced werden.
 
 Im Adapterkabel ist ein USB-zu-Seriell Wandler integriert. In die Konfigurationsdatei muss deshalb das Device des USB-Seriell Wandlers eingetragen werden (Siehe Listing \ref{config:gammu}).
@@ -36,15 +36,71 @@ t=0002 nr=0f: D 05: 1e 0c 00 40 00 06 01 01 70 01 01 47
 t=0003 nr=10: D 8E: 1e 00 0c 7f 00 02 40 07 
 \end{lstlisting}
 
-\subsubsection{Abis over IP tracen mit Wireshark}
+\subsubsection{Abis over IP tracen mit Wireshark}\label{sec:abistrace}
 Das Abis Interface zwischen den BTS und dem BSC kann mit Wireshark getraced werden (Siehe Abbildung \ref{fig:openbscarch}). Dazu wird auf der Maschine auf der OpenBSC läuft Wireshark auf dem Ethernet-Interface gestartet.
 
-Das Abis over IP Protokoll wird nicht von Wireshark unterstützt und aufgelöst. Dieses Feature steht aber als Patch für Wireshark vom OpenBSC Projekt zur Verfügung. 
+Das Abis over IP Protokoll wird nicht von Wireshark unterstützt und aufgelöst. Dieses Feature steht aber als Patches für Wireshark vom OpenBSC Projekt zur Verfügung.
 
-{\Large TODO kompilieren von wireshark }
+Die Patches für Wireshark liegen im Repository von OpenBSC. Die Doku im OpenBSC-wiki ist dafür nicht so hilfreich. Wenn man sich den Quelltext von OpenBSC holt sind im Verzeichnis \lstinline{wireshark/} verschiedene Patches die auf die SVN-Revision r38894 von Wireshark angewendet werden können. Damit werden verschiedene Features zu Wireshark hinzugefügt \cite{bib:wiresharkabis, bib:wiresharkabisreadme}.
+
+Angewendet werden diese Patches mit folgendem Kommando (ausgeführt im Wireshark Quelltextverzeichnis auf SVN Revision r38894):
+\begin{lstlisting}[caption={Patchen von Wireshark}]
+$ patch -p1 < $OPENBSC_DIR/wireshark/0001-abis_oml.patch
+$ patch -p1 < $OPENBSC_DIR/wireshark/0002-ericsson_rbs2409.patch
+$ patch -p1 < $OPENBSC_DIR/wireshark/0003-lucent-hnb.patch
+$ patch -p1 < $OPENBSC_DIR/wireshark/0004-rsl-ipaccess.patch
+$ patch -p1 < $OPENBSC_DIR/wireshark/0005-rsl-hsl.patch
+$ patch -p1 < $OPENBSC_DIR/wireshark/0006-abis_oml-hsl.patch 
+\end{lstlisting}
+
+
 
 \subsection{Intra BSC Handover mit OpenBSC und zwei nanoBTS}
 
+\subsubsection{Aufbau und Durchführung}
+In einem Raum (Mobile Netze Labor) wurde an zwei Ecken jeweils eine nanoBTS gelegt und per Ethernet mit dem Laborrechner verbunden. Auf dem Rechner wurde OpenBSC gemäß Kapitel \ref{sec:openbsc} konfiguriert. Durch hin und hergehen zwischen den beiden \gls{bts} während eines Anrufs soll das OpenBSC Handover auslösen.
 
-\subsubsection{Aufbau}
-In einem Raum (Mobile Netze Labor) wurden an zwei Ecken jeweils eine nanoBTS aufgestellt und mit dem Laborrechner verbunden. 
+Während des Handovers wurde das Um Interface (siehe Kapitel \ref{sec:umtrace}) und das Abis Interface (siehe Kapitel \ref{sec:abistrace}) getraced.
+
+Abbildung \ref{fig:adhandover} zeigt das Ablaufdiagramm eines Handovers. in den Folgenden zwei Abschnitten werden die zwei Traces untersucht. 
+
+\subsubsection{Ablauf Handover auf dem Um Interface}
+
+Während eines Anrufs werden laufend \textit{Measurement Reports} an die \gls{bts} über den \gls{sacch} gesendet. Der Inhalt eines solchen Pakets ist in Listing \ref{lst:measurement-result} abgedruckt. Die \gls{bts} leitet dieses Paket an die \gls{bsc} weiter, die die Entscheidung über einen Handover trifft. 
+
+\begin{lstlisting}[label=lst:bschandovertrace,caption={Übersicht über die gesendeten Pakete auf dem Um Interface},numbers=none]
+No. Src Dest Protocol Length Info
+271	MS	BTS  LAPDm	  23     U, func=UI(DTAP) (RR) Measurement Report 
+284	BTS	MS   LAPDm	  23     I, N(R)=4, N(S)=2(DTAP) (RR) Handover Command 
+285	MS	BTS  LAPDm	  23     S, func=RR, N(R)=3
+292	MS  BTS  LAPDm    23     U P, func=SABM
+297	BTS MS   LAPDm	  23     U F, func=UA
+\end{lstlisting}
+
+Die alte \gls{bts} sendet dann zur Mobilstation einen Handover Command, der die Frequenz und den Zeitschlitz der neuen \gls{bts} beinhaltet. 
+
+
+
+
+\begin{lstlisting}[label=lst:measurement-result,caption={Measurement Result}]
+0... .... = BA-USED: 0
+.0.. .... = DTX-USED: DTX was not used
+..10 0010 = RXLEV-FULL-SERVING-CELL: -77 <= x < -76 dBm (34)
+0... .... = 3G-BA-USED: 0
+.0.. .... = MEAS-VALID: The measurement results are valid
+..10 0100 = RXLEV-SUB-SERVING-CELL: -75 <= x < -74 dBm (36)
+.000 .... = RXQUAL-FULL-SERVING-CELL: BER < 0.2%, Mean value 0.14% (0)
+.... 000. = RXQUAL-SUB-SERVING-CELL: BER < 0.2%, Mean value 0.14% (0)
+.... ...0  01.. .... = NO-NCELL-M: 1 neighbour cell measurement result (1)
+..10 1101 = RXLEV-NCELL: 45
+0000 0... = BCCH-FREQ-NCELL: 0
+.... .111  111. .... = BSIC-NCELL: 63
+\end{lstlisting}
+
+
+
+
+
+
+
+

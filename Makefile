@@ -1,9 +1,13 @@
 MAINFILE = main.tex
-OPTIONS = --jobname=ausgabe
+AUSGABE = ausgabe
+OPTIONS = --jobname=$(AUSGABE)
 default: pdf
 
 pdf:
 	pdflatex $(OPTIONS) $(MAINFILE)
+
+glossary:
+	makeglossaries $(AUSGABE)
 
 clean:
 	find . \

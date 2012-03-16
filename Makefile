@@ -1,5 +1,6 @@
 MAINFILE = main.tex
 OPTIONS = --jobname=ausgabe
+
 default: pdf
 
 pdf:
@@ -22,3 +23,4 @@ clean:
 	-o -name "*.nav" \
 	-o -name "*.idx" \) \
 	-print0 | xargs -0 rm
+

@@ -36,7 +36,12 @@ t=0002 nr=0f: D 05: 1e 0c 00 40 00 06 01 01 70 01 01 47
 t=0003 nr=10: D 8E: 1e 00 0c 7f 00 02 40 07 
 \end{lstlisting}
 
-\subsubsection{Patchen von Wireshark}
+\subsubsection{Abis over IP tracen mit Wireshark}
+Das Abis Interface zwischen den BTS und dem BSC kann mit Wireshark getraced werden (Siehe Abbildung \ref{fig:openbscarch}). Dazu wird auf der Maschine auf der OpenBSC läuft Wireshark auf dem Ethernet-Interface gestartet.
+
+Das Abis over IP Protokoll wird nicht von Wireshark unterstützt und aufgelöst. Dieses Feature steht aber als Patch für Wireshark vom OpenBSC Projekt zur Verfügung. 
+
+{\Large TODO kompilieren von wireshark }
 
 \subsection{Intra BSC Handover mit OpenBSC und zwei nanoBTS}
 

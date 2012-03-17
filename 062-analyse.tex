@@ -53,8 +53,6 @@ $ patch -p1 < $OPENBSC_DIR/wireshark/0005-rsl-hsl.patch
 $ patch -p1 < $OPENBSC_DIR/wireshark/0006-abis_oml-hsl.patch 
 \end{lstlisting}
 
-
-
 \subsection{Intra BSC Handover mit OpenBSC und zwei nanoBTS}
 
 \subsubsection{Aufbau und Durchführung}
@@ -66,35 +64,49 @@ Abbildung \ref{fig:adhandover} zeigt das Ablaufdiagramm eines Handovers. in den 
 
 \subsubsection{Ablauf Handover auf dem Um Interface}
 
-Während eines Anrufs werden laufend \textit{Measurement Reports} an die \gls{bts} über den \gls{sacch} gesendet. Der Inhalt eines solchen Pakets ist in Listing \ref{lst:measurement-result} abgedruckt. Die \gls{bts} leitet dieses Paket an die \gls{bsc} weiter, die die Entscheidung über einen Handover trifft. 
+Während eines Anrufs werden laufend \textit{Measurement Reports} an die \gls{bts} über den \gls{sacch} gesendet. Die \gls{bts} leitet die Reports an die \gls{bsc} weiter, die letzendlich auch die Entscheidung über einen Handover trifft. Ist diese Entscheidung getroffen wird an die Mobilstation ein Handover Command gesendet. Die Mobilstation führt dann den Handover aus indem sie der neuen \gls{bts} eine \gls{sabm} Nachricht sendet um eine Verbindung aufzubauen. Die BTS beantwortet den \gls{sabm} Request mit einem \gls{UA} \cite[3.4.4]{bib:3gpp0408}\cite[3.1.5]{bib:3gpp0408} \cite[1.7.4]{bib:grundkursmks}.
+
+Listing \ref{lst:bschandovertrace} zeigt die relevanten Pakete des Handovers auf dem Um Interface.
 
 \begin{lstlisting}[label=lst:bschandovertrace,caption={Übersicht über die gesendeten Pakete auf dem Um Interface},numbers=none]
 No. Src Dest Protocol Length Info
 271	MS	BTS  LAPDm	  23     U, func=UI(DTAP) (RR) Measurement Report 
 284	BTS	MS   LAPDm	  23     I, N(R)=4, N(S)=2(DTAP) (RR) Handover Command 
-285	MS	BTS  LAPDm	  23     S, func=RR, N(R)=3
 292	MS  BTS  LAPDm    23     U P, func=SABM
 297	BTS MS   LAPDm	  23     U F, func=UA
 \end{lstlisting}
 
-Die alte \gls{bts} sendet dann zur Mobilstation einen Handover Command, der die Frequenz und den Zeitschlitz der neuen \gls{bts} beinhaltet. 
+\textbf{System Information Type 2}\\
+Damit die Mobilstation erfährt welche benachbarten Zellen relevant sind für die Messung der Signalstärke schickt die Basisstation ein System Information Type 2. Diese benachbarten Zellen müssen vorher im BSC konfiguriert werden. In Listing \ref{lst:sysinftype2} ist ein Auszug aus dem System Information Type 2 mit dem die Neighbour Cell Description mitgesendet wird. Dort sieht man die List of \glspl{ARFCN}
 
+\begin{lstlisting}[label=lst:sysinftype2,caption={Nachbarzellen im System Information Type 2}]
+Neighbour Cell Description - BCCH Frequency List
+..0. .... = EXT-IND: The information element carries the complete BA (0)
+...0 .... = BA-IND: 0
+10.. 111. = Format Identifier: variable bit map (0x47)
+List of ARFCNs = 846
+\end{lstlisting}
 
+Der Inhalt eines solchen Pakets ist in Listing \ref{lst:measurement-result} abgedruckt. Die \gls{bts} leitet dieses Paket an die \gls{bsc} weiter, die die Entscheidung über einen Handover trifft.
 
+Die alte \gls{bts} sendet dann zur Mobilstation einen Handover Command, der die Frequenz und den Zeitschlitz der neuen \gls{bts} beinhaltet.
 
 \begin{lstlisting}[label=lst:measurement-result,caption={Measurement Result}]
-0... .... = BA-USED: 0
-.0.. .... = DTX-USED: DTX was not used
-..10 0010 = RXLEV-FULL-SERVING-CELL: -77 <= x < -76 dBm (34)
-0... .... = 3G-BA-USED: 0
-.0.. .... = MEAS-VALID: The measurement results are valid
-..10 0100 = RXLEV-SUB-SERVING-CELL: -75 <= x < -74 dBm (36)
-.000 .... = RXQUAL-FULL-SERVING-CELL: BER < 0.2%, Mean value 0.14% (0)
-.... 000. = RXQUAL-SUB-SERVING-CELL: BER < 0.2%, Mean value 0.14% (0)
-.... ...0  01.. .... = NO-NCELL-M: 1 neighbour cell measurement result (1)
-..10 1101 = RXLEV-NCELL: 45
-0000 0... = BCCH-FREQ-NCELL: 0
-.... .111  111. .... = BSIC-NCELL: 63
+351	0	MS	BTS	LAPDm	23	U, func=UI(DTAP) (RR) Measurement Report 
+  GSM A-I/F DTAP - Measurement Report
+    Measurement Results
+    0... .... = BA-USED: 0
+    .0.. .... = DTX-USED: DTX was not used
+    ..10 0010 = RXLEV-FULL-SERVING-CELL: -77 <= x < -76 dBm (34)
+    0... .... = 3G-BA-USED: 0
+    .0.. .... = MEAS-VALID: The measurement results are valid
+    ..10 0100 = RXLEV-SUB-SERVING-CELL: -75 <= x < -74 dBm (36)
+    .000 .... = RXQUAL-FULL-SERVING-CELL: BER < 0.2%, Mean value 0.14% (0)
+    .... 000. = RXQUAL-SUB-SERVING-CELL: BER < 0.2%, Mean value 0.14% (0)
+    .... ...0  01.. .... = NO-NCELL-M: 1 neighbour cell measurement result (1)
+    ..10 1101 = RXLEV-NCELL: 45
+    0000 0... = BCCH-FREQ-NCELL: 0
+    .... .111  111. .... = BSIC-NCELL: 63
 \end{lstlisting}
 
 

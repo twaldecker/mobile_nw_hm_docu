@@ -37,7 +37,7 @@ t=0003 nr=10: D 8E: 1e 00 0c 7f 00 02 40 07
 \end{lstlisting}
 
 \subsubsection{Abis over IP tracen mit Wireshark}\label{sec:abistrace}
-Das Abis Interface zwischen den BTS und dem BSC kann mit Wireshark getraced werden (Siehe Abbildung \ref{fig:openbscarch}). Dazu wird auf der Maschine auf der OpenBSC läuft Wireshark auf dem Ethernet-Interface gestartet.
+Das Abis Interface zwischen den \gls{bts} und dem \gls{bsc} kann mit Wireshark getraced werden (Siehe Abbildung \ref{fig:openbscarch}). Dazu wird auf der Maschine auf der OpenBSC läuft Wireshark auf dem Ethernet-Interface gestartet.
 
 Das Abis over IP Protokoll wird nicht von Wireshark unterstützt und aufgelöst. Dieses Feature steht aber als Patches für Wireshark vom OpenBSC Projekt zur Verfügung.
 
@@ -76,7 +76,9 @@ No. Src Dest Protocol Length Info
 297	BTS MS   LAPDm	  23     U F, func=UA
 \end{lstlisting}
 
-\textbf{System Information Type 2}\\
+Im weiteren Teil dieses Abschnitts wird auf die am Handover beteiligten Nachrichten genauer eingegangen.
+
+\textbf{System Information Type 2}
 Damit die Mobilstation erfährt welche benachbarten Zellen relevant sind für die Messung der Signalstärke schickt die Basisstation ein System Information Type 2. Diese benachbarten Zellen müssen vorher im BSC konfiguriert werden. In Listing \ref{lst:sysinftype2} ist ein Auszug aus dem System Information Type 2 mit dem die Neighbour Cell Description mitgesendet wird. Dort sieht man die List of \glspl{ARFCN}
 
 \begin{lstlisting}[label=lst:sysinftype2,caption={Nachbarzellen im System Information Type 2}]
@@ -87,9 +89,10 @@ Neighbour Cell Description - BCCH Frequency List
 List of ARFCNs = 846
 \end{lstlisting}
 
-Der Inhalt eines solchen Pakets ist in Listing \ref{lst:measurement-result} abgedruckt. Die \gls{bts} leitet dieses Paket an die \gls{bsc} weiter, die die Entscheidung über einen Handover trifft.
+\textbf{Measurement Report}
+Im Measurement Report sind die Measurement Results enthalten. Die Spezifikation mit dem Layout und der Beschreibung der Results ist in \cite[10.5.2.20]{bib:3gpp0408}. In Listing \ref{lst:measurement-result} ist die Beschreibung eines per Wireshark getraceten Reports abgedruckt.
 
-Die alte \gls{bts} sendet dann zur Mobilstation einen Handover Command, der die Frequenz und den Zeitschlitz der neuen \gls{bts} beinhaltet.
+Der Inhalt der Measurement Results wird nun kurz erklärt. Das Feld \lstinline{RXLEV-FULL-SERVING-CELL} gibt die empfangene Signalstärke auf allen Slots an. Das Messergebnis ist gültig, das gibt uns das Feld \lstinline{MEAS-VALID} an. Der Wert im Feld \lstinline{NO-NCELL} gibt an, das wir ein Messergebnis für eine Nachbarzelle haben. Das Messergebnis für dei Nachbarzelle ist im Feld \lstinline{RXLEV-NCELL} \cite[Table 10.40]{bib:3gpp0408}.
 
 \begin{lstlisting}[label=lst:measurement-result,caption={Measurement Result}]
 351	0	MS	BTS	LAPDm	23	U, func=UI(DTAP) (RR) Measurement Report 
@@ -109,8 +112,36 @@ Die alte \gls{bts} sendet dann zur Mobilstation einen Handover Command, der die 
     .... .111  111. .... = BSIC-NCELL: 63
 \end{lstlisting}
 
+\textbf{Handover Command}
+Fällt der \gls{bsc} die Entscheidung für einen Handover dann sendet die Basisstation einen Handover Command in dem unter anderem die Frequenz des Kontrollkanals (\gls{BCCH} \gls{ARFCN}) und die Beschreibung des \gls{TCH/F}, bestehend aus dem Timeslot und der Frequenz \gls{ARFCN}.
 
+\begin{lstlisting}[label=lst:handover-command,caption={Handover Command}]
+DTAP Radio Resources Management Message Type: Handover Command (0x2b)
+ Cell Description
+  ..11 1... = NCC: 7
+  .... .111 = BCC: 7
+  BCCH ARFCN(RF channel number): 840
+ Channel Description 2 - Description of the first channel, after time
+  0000 1... = TCH/F + FACCH/F and SACCH/F
+  .... .010 = Timeslot: 2
+  111. .... = Training Sequence: 7
+  ...0 .... = Hopping channel: No
+  .... 00.. = Spare
+  Single channel : ARFCN 840
+ Handover Reference
+  Handover reference value: 6
+ Power Command and access type
+\end{lstlisting}
+  
+{\LARGE Platz für SABM - UA}
 
+\subsubsection{Handover auf der Abis Schnittstelle zwischen OpenBSC und den zwei nanoBTS}
+
+Wie in Abbildung \ref{fig:adhandover} zu sehen ist bekommt der \gls{bsc} in unserem Fall OpenBSC von der \gls{bts} mit der aktiven Verbindung die Measurement Reports. Entscheidet sich der \gls{bsc} für einen Handover dann sendet er ein Channel Activation an die neue \gls{bts}. Diese allokiert einen neuen Kanal und antwortet dann mit einem Channel Activation Acknowledgement. Dann sendet der \gls{bsc} den Handover Command zur alten BTS. Sobald ein Established Indication von der neuen BTS eintrifft wird der Sprachkanal an die neue BTS umgeleitet. Am Ende wird der Kanal auf der alten BTS mit einem Channel Release freigegeben. Die BTS bestätigt dies mit einem Channel Release Acknowledgement. 
+
+\begin{lstlisting}
+
+\end{lstlisting}
 
 
 

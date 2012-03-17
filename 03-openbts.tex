@@ -1,4 +1,4 @@
-%\section{OpenBTS}
+\newpage
 \utsection{OpenBTS}{Max Eschenbacher}\label{sec:openbts}
 \textbf{OpenBTS (Open Base Transceiver Station)} ist eine freie Unix-Applikation die in C++ entwickelt wurde. Mit Hilfe eines Software Radios und der entsprechenden Hardware kann OpenBTS die GSM Luftschnittstelle \textit{Um} simulieren. In Verbindung mit einer Private Branch Exchange (PBX) können die Mobilfunkteilnehmer untereinander, sowie, je nach Anbindung, mit VoIP- bzw. Festnetzteilnehmern telefonieren.
 
@@ -46,7 +46,7 @@ Smqueue hat bereits eine solche Short-Code-Anwendung namens "`register"' integri
 \end{itemize}
 
 \textit{(Die Komponenten Smqueue und Subscriber Registry (sipauthserve) sind keine eigenständigen Projekte, sondern Bestandteile von OpenBTS.)}\\
-\newpage
+
 In Abbildung \ref{fig:openbts_comp} sind die Beziehungen, sowie die Verbindungsprotokolle der einzelnen Komponenten untereinander ersichtlich.
 
 \begin{figure}[htbp]
@@ -65,7 +65,7 @@ In Abbildung \ref{fig:openbts_system_diagram} ist noch einmal der Kommunikations
 	\caption{System Diagramm (Quelle: \cite{bib:diagramm:openbts})}
 	\label{fig:openbts_system_diagram}
 \end{figure}
-\newpage
+
 \subsubsection{Datenbanken}
 Im System Diagramm findet man vier Datenbanken vor, welche für folgende Zwecke benutzt werden:
 
@@ -95,8 +95,10 @@ Einer der Hauptmerkmale von OpenBTS ist es, das Mobile Switching Center (MSC) du
 	\label{fig:openbts_sip_asterisk}
 \end{figure}
 
-Die bereits oben erwähnte Komponente \textit{sipauthserve} ist dabei für die Registrierung der MS zuständig und trägt dazu  die Teilnehmer in die Datenbank \verb|sqlite3.db| ein.\\ 
+Die bereits oben erwähnte Komponente \textit{sipauthserve} ist dabei für die Registrierung der MS zuständig und trägt dazu  die Teilnehmer in die Datenbank \verb|sqlite3.db| ein.
+
 Nachfolgend werden drei wesentliche GSM-Szenarien beschrieben, um das Zusammenspiel aus GSM- und SIP, wie in Abbildung \ref{fig:openbts_system_diagram} gezeigt, zu verdeutlichen:
+
 \begin{itemize}
 \item \textbf{Registrierung (Location Update)}\\
 Wenn die MS eingeschaltet wird oder eine neue Location Area betritt, führt sie einen \textit{LOCATION UPDATE REQUEST} (LUR) aus. Zudem ist es möglich, dass die BTS die MS periodisch dazu auffordert ein LUR auszuführen. Bei OpenBTS wird ein GSM LUR in Form eines \textit{SIP REGISTER} durchgeführt (siehe Abb. \ref{fig:openbts_registration}). Zuerst findet der allgemeine GSM Ablauf der Kanalanforderung (ausgehend von der MS) statt. Nun folgt das eigentliche Location Update. Dazu schickt die MS einen \textit{LOCATION UPDATE REQUEST} an OpenBTS, welche daraufhin ein \textit{SIP REGISTER} an \textit{sipauthserve} sendet. \textit{sipauthserve} erstellt nun einen entsprechenden Eintrag in der SQL-DB \verb|sqlite3.db| (siehe Abb. \ref{fig:openbts_system_diagram}). Zum Schluss wird der zugewiesene GSM Kanal wieder abgebaut. Von nun an ist die MS im Netz registriert und kann durch einen \textit{PAGING REQUEST} "`angesprochen"' werden.
@@ -301,7 +303,7 @@ Auch an der Konfiguration von \textit{smqueue} muss zwangsläufig keine Änderun
 Die Konfiguration von Asterisk beschränkt sich in diesem Dokument auf die Intra-BTS-Kommunikation, d.h. es können nur Gespräche zwischen MS und MS bzw. MS und Asterisk-Diensten (Echo-Test, VoiceMail) stattfinden, nicht jedoch von oder nach außerhalb (Festnetz, andere SIP-Teilnehmer) telefoniert werden.
 \begin{itemize}
 \item \textbf{Teilnehmereintrag}\\\label{asterisk_teilnehmer}Damit die MS untereinander telefonieren können, müssen die Asterisk-Konfigurationsdateien \verb|sip.conf| und \verb|extensions.conf| im Verzeichnis \verb|/etc/asterisk/| angepasst werden. Als Beispiel wird die \textbf{IMSI 001010000000000} verwendet und dieser die Teilnehmerrufnummer \textbf{2101} zugeordnet.\\
-\newpage
+
 In \verb|sip.conf| muss folgender Eintrag hinzugefügt werden:
 \begin{figure}[ht]
 \setbox0\vbox{\small
@@ -364,6 +366,7 @@ In der Praxis zeigte sich, dass die Sprachverzögerung um die 0.5 Sekunden liegt
 \end{itemize}
 \begin{itemize}
 \item \textbf{VoiceMail}\\Jedem eingetragenen Teilnehmer kann eine Mailbox zugeordnet werden, welche aktiv wird, wenn der Teilnehmer entweder nicht erreichbar ist (im Netz nicht registriert) oder nach einer einstellbaren Zeit den Anruf nicht entgegennimmt.
+\newpage
 Für die Einrichtung einer Mailbox sind die folgenden Schritte notwendig:
 \begin{enumerate}
 \item Neuen Kontext (im Bsp. \verb|[mailbox]| genannt) und Benutzer in \verb|/etc/asterisk/voicemail.conf| hinzufügen:
@@ -419,7 +422,6 @@ Damit die Registrierung der Teilnehmer und der Versand von Textnachrichten mögl
 ./subscriberRegistry/trunk/sipauthserve &
 ./openbts/trunk/apps/OpenBTS
 \end{verbatim}
-\newpage
 \subsubsection{Command Line Interface (CLI)}
 Konnte OpenBTS erfolgreich gestartet werden, sieht man nun das Command Line Interface (CLI) vor sich:
 \begin{figure}[ht]
@@ -463,7 +465,6 @@ CN TN type     id          pct    dB   dBm  sym   dBm   pct
 \end{figure}\\
 Im obigen Beispiel handelt es sich um einen Verkehrskanal im Full-Rate Modus (\verb|TCH/F|) der den ersten Zeitschlitz (\verb|TN=1|) belegt und der Transaktions-ID \verb|1247828231| zugeordnet ist. Die MS sendet mit \verb|30 dBm| (\verb|TXPWR|) und besitzt einen Timing Advance (\verb|TXTA|) Wert von \verb|1|. Die beiden Angaben \verb|UPFER| und \verb|RSSI| beziehen sich auf den Uplink. \verb|UPFER| gibt dabei die Fehlerrate der Frames an, die im Beispiel bei \verb|0,54| Prozent liegt, und \verb|RSSI| die Stärke des Sendesignals der MS, hier \verb|-53 dBm|. Für den Downlink gibt \verb|DNBER| die Fehlerrate der Bits an und \verb|DNLEV|, das Pendant zu RSSI im Uplink, gibt die Empfangssignalstärke der MS, hier \verb|-48 dBm|, an.
 \end{itemize}
-\newpage
 \begin{itemize}
 \item \textbf{Befehl:} \verb|tmsis|\\
 Listet die aktuelle TMSI-Tabelle auf.

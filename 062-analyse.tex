@@ -62,9 +62,11 @@ Während des Handovers wurde das Um Interface (siehe Kapitel \ref{sec:umtrace}) 
 
 Abbildung \ref{fig:adhandover} zeigt das Ablaufdiagramm eines Handovers. in den Folgenden zwei Abschnitten werden die zwei Traces untersucht. 
 
-\subsubsection{Ablauf Handover auf dem Um Interface}
+\subsubsection{Ablauf Handover auf dem Um Interface}\label{sec:obsc-um}
 
 Während eines Anrufs werden laufend \textit{Measurement Reports} an die \gls{bts} über den \gls{sacch} gesendet. Die \gls{bts} leitet die Reports an die \gls{bsc} weiter, die letzendlich auch die Entscheidung über einen Handover trifft. Ist diese Entscheidung getroffen wird an die Mobilstation ein Handover Command gesendet. Die Mobilstation führt dann den Handover aus indem sie der neuen \gls{bts} eine \gls{sabm} Nachricht sendet um eine Verbindung aufzubauen. Die BTS beantwortet den \gls{sabm} Request mit einem \gls{UA} \cite[3.4.4]{bib:3gpp0408}\cite[3.1.5]{bib:3gpp0408} \cite[1.7.4]{bib:grundkursmks}.
+
+Die in diesem Abschnitt aufgeführten Auszüge aus Tracefiles stammen aus der Datei \lstinline{files/openbsc-traces/handoversuccess.xml} in \cite{bib:githubfiles}.
 
 Listing \ref{lst:bschandovertrace} zeigt die relevanten Pakete des Handovers auf dem Um Interface.
 
@@ -139,7 +141,7 @@ DTAP Radio Resources Management Message Type: Handover Command (0x2b)
 
 Wie in Abbildung \ref{fig:adhandover} zu sehen ist bekommt der \gls{bsc} in unserem Fall OpenBSC von der \gls{bts} mit der aktiven Verbindung die Measurement Reports. Entscheidet sich der \gls{bsc} für einen Handover dann sendet er ein Channel Activation an die neue \gls{bts}. Diese allokiert einen neuen Kanal und antwortet dann mit einem Channel Activation Acknowledgement. Dann sendet der \gls{bsc} den Handover Command zur alten BTS. Sobald ein Established Indication von der neuen BTS eintrifft wird der Sprachkanal an die neue BTS umgeleitet. Am Ende wird der Kanal auf der alten BTS mit einem Channel Release freigegeben. Die BTS bestätigt dies mit einem Channel Release Acknowledgement.
 
-Um das Abis Interface auf dem Rechner mit OpenBSC zu tracen wurde der Wireshark mit den Patches gepatcht und kompiliert (siehe Abschnitt \ref{sec:abistrace}). Um nur die relevanten Pakete anzuzeigen wurde im Wireshark folgender Filter angewandt:
+Um das Abis Interface auf dem Rechner mit OpenBSC zu tracen wurde der Wireshark mit den Patches gepatcht und kompiliert (siehe Abschnitt \ref{sec:abistrace}). Um nur die relevanten Pakete anzuzeigen wurde im Wireshark auf die Dateien \lstinline{files/openbsc-traces/handover-abis} und \lstinline{files/openbsc-traces/handover-abis-part} aus \cite{bib:githubfiles} folgender Filter angewandt:
 
 \begin{lstlisting}[numbers=none]
 (ip.addr == 10.28.9.33 or ip.addr == 10.28.9.34) and (ip.proto != 17)
@@ -170,24 +172,43 @@ Mit einem Nokia Handy wurde der Echo-Test von Asterisk angerufen (siehe Kapitel 
 
 Um einen Handover auszulösen wurde in die Entscheidungslogik des Handovers ein Hack eingebaut (siehe Abschnitt \ref{sec:hom}), der dann einen Handover auslöst, wenn eine Datei im OpenBTS Verezichnis existiert.
 
+Während eines laufenden Anrufs wurde diese Datei angelegt und damit der Handover durchgeführt. Die entstandenen Traces werden nun analysiert. Das entsprechende Tracefile ist \lstinline{files/openbts-traces/handover-test-b.xml}
 
+\textbf{System Information Type 2} Als Nachbarzellen wurden die \glspl{ARFCN} 846 und 867 konfiguriert, wobei 867 die eigene Frequenz der Basisstation ist. Im Auszug des System Information Type 2 in Listing \ref{lst:obts-sysinft2} sind diese Informationen zu sehen.
 
+\begin{lstlisting}[label=lst:obts-sysinft2, caption={Auszug aus dem System Information Type 2 von OpenBTS}]
+Frame 104: 23 bytes on wire (184 bits), 23 bytes captured (184 bits)
+GSM Um Interface
+  ARFCN: 867
+GSM A-I/F DTAP - System Information Type 2
+  Neighbour Cell Description - BCCH Frequency List
+    List of ARFCNs = 846 867
+\end{lstlisting}
 
+\textbf{Measurement Report} Es wurde keine Basisstation mit der \gls{ARFCN} 846 zu diesem Zeitpunkt betrieben. Im Measurement Report wird deshalb nur die \gls{bts} 1 (\lstinline{BCCH-FREQ-NCELL}) der Null-indizierten Liste des System Information Type 2 aufgeführt (vgl. das Measruement Report im OpenBSC Kapitel \ref{sec:obsc-um}). Diese ist die gleiche wie die aktuelle \gls{bts} und zeigt auch das gleiche Messergebnis 63.
 
+\begin{lstlisting}[label=lst:obts-mmrept, caption={Auszug aus dem Measurement Report}]
+Frame 168: 23 bytes on wire (184 bits), 23 bytes captured (184 bits)
+GSM A-I/F DTAP - Measurement Report
+  Measurement Results
+    ..11 1111 = RXLEV-FULL-SERVING-CELL: >= -48 dBm (63)
+    .0.. .... = MEAS-VALID: The measurement results are valid
+    .... ...0  01.. .... = NO-NCELL-M: 1 neighbour cell measurement result (1)
+    ..11 1111 = RXLEV-NCELL: 63
+    0000 1... = BCCH-FREQ-NCELL: 1
+    .... .000  010. .... = BSIC-NCELL: 2
+\end{lstlisting}
 
+\textbf{Handover Command} Der Handover wird über den Hack (siehe Abschnitt \ref{sec:hom}) getriggert. Die Basisstation sendet daraufhin das Handover Command in dem auch der neue Timeslot übergeben wird. 
 
+\begin{lstlisting}[label=obtshoc, caption={Auszug aus dem Handover Command}]
+Frame 209: 23 bytes on wire (184 bits), 23 bytes captured (184 bits)
+GSM A-I/F DTAP - Handover Command
+Channel Description 2 - Description of the first channel, after time
+.... .110 = Timeslot: 6
+\end{lstlisting}
 
-
-
-
-
-
-
-
-
-
-
-
+Der Handover schlägt fehl, da der Traffic Channel nicht weitergeleitet wird. Die Mobilstation sendet deshalb Handover Failures und die BTS Disconnected daraufhin die Mobilstation.
 
 
 

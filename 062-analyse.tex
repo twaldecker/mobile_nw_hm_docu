@@ -134,8 +134,10 @@ DTAP Radio Resources Management Message Type: Handover Command (0x2b)
   Handover reference value: 6
  Power Command and access type
 \end{lstlisting}
-  
-{\LARGE Platz für SABM - UA}
+
+Nach dem Handover Command baut die Mobilstation eine neue Verbindung auf und fängt mit der Contention Resolution an. Dazu sendet sie ein SABM und bekommt als Antwort ein UA \cite[5.4.1.4]{bib:3gpp0406}.
+
+
 
 \subsubsection{Handover auf der Abis Schnittstelle zwischen OpenBSC und den zwei nanoBTS}
 

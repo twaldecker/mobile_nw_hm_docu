@@ -1,4 +1,4 @@
-\utsection{Analyse}{Thomas Waldecker}\label{sec:analyse}
+\utsection{Analyse der Handover}{Thomas Waldecker}\label{sec:analyse}
 
 \subsection{Vorbereitung}
 \subsubsection{Tracen auf dem Um Interface mit einem Nokia 3310}\label{sec:umtrace}
@@ -137,13 +137,32 @@ DTAP Radio Resources Management Message Type: Handover Command (0x2b)
 
 \subsubsection{Handover auf der Abis Schnittstelle zwischen OpenBSC und den zwei nanoBTS}
 
-Wie in Abbildung \ref{fig:adhandover} zu sehen ist bekommt der \gls{bsc} in unserem Fall OpenBSC von der \gls{bts} mit der aktiven Verbindung die Measurement Reports. Entscheidet sich der \gls{bsc} für einen Handover dann sendet er ein Channel Activation an die neue \gls{bts}. Diese allokiert einen neuen Kanal und antwortet dann mit einem Channel Activation Acknowledgement. Dann sendet der \gls{bsc} den Handover Command zur alten BTS. Sobald ein Established Indication von der neuen BTS eintrifft wird der Sprachkanal an die neue BTS umgeleitet. Am Ende wird der Kanal auf der alten BTS mit einem Channel Release freigegeben. Die BTS bestätigt dies mit einem Channel Release Acknowledgement. 
+Wie in Abbildung \ref{fig:adhandover} zu sehen ist bekommt der \gls{bsc} in unserem Fall OpenBSC von der \gls{bts} mit der aktiven Verbindung die Measurement Reports. Entscheidet sich der \gls{bsc} für einen Handover dann sendet er ein Channel Activation an die neue \gls{bts}. Diese allokiert einen neuen Kanal und antwortet dann mit einem Channel Activation Acknowledgement. Dann sendet der \gls{bsc} den Handover Command zur alten BTS. Sobald ein Established Indication von der neuen BTS eintrifft wird der Sprachkanal an die neue BTS umgeleitet. Am Ende wird der Kanal auf der alten BTS mit einem Channel Release freigegeben. Die BTS bestätigt dies mit einem Channel Release Acknowledgement.
 
-\begin{lstlisting}
+Um das Abis Interface auf dem Rechner mit OpenBSC zu tracen wurde der Wireshark mit den Patches gepatcht und kompiliert (siehe Abschnitt \ref{sec:abistrace}). Um nur die relevanten Pakete anzuzeigen wurde im Wireshark folgender Filter angewandt:
 
+\begin{lstlisting}[numbers=none]
+(ip.addr == 10.28.9.33 or ip.addr == 10.28.9.34) and (ip.proto != 17)
 \end{lstlisting}
 
+Dieser Filter zeigt nur die Pakete an die von einer der beiden nanoBTS empfangen oder gesendet werden. Außerdem werden alle Pakete die per UDP Protokoll gesendet werden ausgeblendet.
 
+Wendet man diesen Filter an, erhält man eine gute Übersicht und kann die relevanten Abis-Pakete inspizieren. Listing \ref{lst:abis-trace} zeigt einen Auszug aus dem Tracefile in dem der oben erkärte Ablauf zu erkennen ist. Anzumerken ist noch das die IP-Adressen mit den Endungen 33 und 34 die nanoBTS sind.
+
+\begin{lstlisting}[label=lst:abis-trace,caption={Abis Trace mit Handover Nachrichten}]
+No Source     Dest.    Len. Info
+29 10.28.9.34 10.28.9.31 96	MEASurement RESult (DTAP) (RR) Measurement Report 
+31 10.28.9.31 10.28.9.33 85	CHANnel ACTIVation 
+32 10.28.9.33 10.28.9.31 64	CHANnel ACTIVation ACKnowledge 
+34 10.28.9.31 10.28.9.34 75	DATA REQuest (DTAP) (RR) Handover Command 
+47 10.28.9.33 10.28.9.31 63	ESTablish INDication 
+51 10.28.9.31 10.28.9.34 65	RELease REQuest 
+54 10.28.9.34 10.28.9.31 63	RELease CONFirm 
+56 10.28.9.31 10.28.9.34 61	RF CHANnel RELease 
+57 10.28.9.34 10.28.9.31 61 RF CHANnel RELease ACKnowledge 
+\end{lstlisting}
+
+\subsection{Intra BTS Handover mit OpenBTS}
 
 
 

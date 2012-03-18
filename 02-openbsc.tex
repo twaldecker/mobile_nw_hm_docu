@@ -11,11 +11,11 @@ Bei OpenBSC handelt es sich wie bei OpenBTS um ein Open Source Projekt. Die Entw
   \label{fig:openbscarch}
 \end{figure}
 
-Abbildung \ref{fig:openbscarch} zeigt den im Projekt verwendeten Versuchsaufbau. OpenBSC übernimmt nicht nur die Aufgaben des BSC, sondern auch die des MSC. Die Teilnehmer Datenbanken HLR und VLR werden mit einer SQLite3 Datenbank realisiert. Wie in Abbildung \ref{fig:openbscarch} dargestellt, werden zwei nanoBTS der Firma ip.access verwendet. Diese werden über getrennte Abis-over-IP-Schnittstellen an OpenBSC angebunden. Mit dem dargestellten Versuchsaufbau ist somit die Durchführung eines in Abschnitt \ref{sec:handover} beschriebenen Intra BSC Handover mit verhältnismäßig geringem Installations- und Konfigurationsaufwand möglich.
+Abbildung \ref{fig:openbscarch} zeigt den im Projekt verwendeten Versuchsaufbau. OpenBSC übernimmt nicht nur die Aufgaben des BSC, sondern auch die des MSC. Die Teilnehmerdatenbanken HLR und VLR werden mit einer SQLite3 Datenbank realisiert. Wie in Abbildung \ref{fig:openbscarch} dargestellt, werden zwei nanoBTS der Firma ip.access verwendet. Diese werden über getrennte Abis-over-IP-Schnittstellen an OpenBSC angebunden. Mit dem dargestellten Versuchsaufbau ist somit die Durchführung eines in Abschnitt \ref{sec:handover} beschriebenen Intra BSC Handover mit verhältnismäßig geringem Installations- und Konfigurationsaufwand möglich.
 
 \subsection{Installation und Konfiguration}
 
-Die Installation von OpenBSC ist ausführlich im Wiki des Projekts \cite{bib:buildopenbsc} dokumentiert. In diesem Abschnitt werden deshalb nur die wichtigsten Punkte der Installation und die Konfiguration des Systems für den Multi-BTS-Betrieb behandelt.
+Die Installation von OpenBSC ist ausführlich im Wiki des Projekts \cite{bib:buildopenbsc} dokumentiert. In diesem Abschnitt werden nur die wichtigsten Punkte der Installation und die Konfiguration des Systems für den Multi-BTS-Betrieb behandelt.
 
 OpenBSC (nitb) besteht aus insgesamt drei Komponenten:
 
@@ -67,7 +67,7 @@ network
    .
 \end{lstlisting}
 
-Neben dem Network Country Code und dem Mobile Network Code (Zeilen 5 und 6) muss in den Netzwerkeinstellungen die Handover-Funktionalität gesetzt werden (Zeile 8). Die Konfiguration der beiden nanoBTS beschränkt sich im wesentlichen auf die Vergabe der eindeutigen CellIDs (Zeilen 13 und 26), der vorher festgelegten UnitIDs (Zeilen 15 und 28) und den beiden Frequenzen (ARFCN in Zeilen 19 und 32).
+Neben dem Network Country Code und dem Mobile Network Code (Zeilen 5 und 6) muss in den Netzwerkeinstellungen die Handover-Funktionalität gesetzt werden (Zeile 8). Die Konfiguration der beiden nanoBTS beschränkt sich im Wesentlichen auf die Vergabe der eindeutigen CellIDs (Zeilen 13 und 26), der vorher festgelegten UnitIDs (Zeilen 15 und 28) und den beiden Frequenzen (ARFCN in Zeilen 19 und 32).
 
 Nach der Modifikation der Konfigurationsdatei wird diese im Verzeichnis \lstinline{<openbsc>/src/osmo-nitb} gespeichert. Anschließend kann das System mit dem Befehl \lstinline{./openbsc} im selben Verzeichnis gestartet werden. Die Bedienung von OpenBSC erfolgt nach dem Start über eine Telnetsitzung auf Port 4242. Mit Hilfe des Command Line Interfaces der Telnetsitzung ist auch die Administration der Teilnehmerdatenbank möglich. Die Verwendung des CLI ist aufgrund der interaktiven Eingabe selbsterklärend.
 

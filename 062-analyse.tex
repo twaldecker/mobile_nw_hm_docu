@@ -19,7 +19,7 @@ use_locking = yes
 gammuloc = 
 \end{lstlisting}
 
-Das Tracen kann nach der weiteren Konfiguration, die in \cite{bib:nokiagammu} beschrieben ist mit folgenden Kommando gestartet werden (Listing \ref{command:gammu}).
+Das Tracen kann nach der weiteren Konfiguration, die in \cite{bib:nokiagammu} beschrieben ist mit folgenden Kommando gestartet werden (Siehe Listing \ref{command:gammu}).
 
 \begin{lstlisting}[label=command:gammu,caption={Aufruf von Gammu}]
 sudo gammu --nokiadebug nhm5_587.txt v20-25,v18-19
@@ -43,7 +43,7 @@ Das Abis over IP Protokoll wird nicht von Wireshark unterstützt und aufgelöst.
 
 Die Patches für Wireshark liegen im Repository von OpenBSC. Die Doku im OpenBSC-wiki ist dafür nicht so hilfreich. Wenn man sich den Quelltext von OpenBSC holt sind im Verzeichnis \lstinline{wireshark/} verschiedene Patches die auf die SVN-Revision r38894 von Wireshark angewendet werden können. Damit werden verschiedene Features zu Wireshark hinzugefügt \cite{bib:wiresharkabis, bib:wiresharkabisreadme}.
 
-Angewendet werden diese Patches mit folgendem Kommando (ausgeführt im Wireshark Quelltextverzeichnis auf SVN Revision r38894):
+Angewendet werden diese Patches mit folgendem Kommando (ausgeführt im Wireshark Quelltextverzeichnis mit SVN Revision r38894):
 \begin{lstlisting}[caption={Patchen von Wireshark}]
 $ patch -p1 < $OPENBSC_DIR/wireshark/0001-abis_oml.patch
 $ patch -p1 < $OPENBSC_DIR/wireshark/0002-ericsson_rbs2409.patch

@@ -48,8 +48,7 @@
 ]{hyperref}
 
 %http://en.wikibooks.org/wiki/LaTeX/Glossary
-\usepackage[toc,nonumberlist]{glossaries}
-
+\usepackage[nonumberlist]{glossaries} %keine seitenzahlen
 
 %Konfigutation für Codelisting
 %see: http://stackoverflow.com/questions/741985
@@ -88,6 +87,11 @@
 %% Index erzeugen
 \makeindex
 \makeglossaries
+\renewcommand*{\glspostdescription}{} %keine punkte nach beschreibung
+\renewcommand*{\glossaryname}{Glossar} %glossartitel
+\setglossarysection{subsection} % subsection für Glossar
+
+
 
 \newacronym{bts}{BTS}{Base Transceiver Station}
 \newacronym{bsc}{BSC}{Base Station Controller}

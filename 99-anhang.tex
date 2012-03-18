@@ -1,9 +1,8 @@
 \appendix
 \section{Anhang}
-\setcounter{section}{1}
 
-\glsaddall
-\printglossaries
+\glsaddall % alle definierten abkürzungen zeigen
+\printglossary[numberedsection] %Glossar, section mit nummer.
 
 %% einfache Aufzählung, kein BibTeX
 \subsection{Literaturverzeichnis}
@@ -36,7 +35,6 @@ Range Networks Inc. 2011
 \bibitem{bib:wiresharkabis} Wireshark Abis dissector:
 \url{http://openbsc.osmocom.org/trac/wiki/nanoBTS#Wiresharkdissector}, Abgerufen am 16.03.2012
 
-
 \bibitem{bib:wiresharkabisreadme} Wireshark Abis README:
 \url{http://openbsc.osmocom.org/trac/browser/wireshark/README}, Abgerufen am 16.03.2012
 
@@ -48,7 +46,10 @@ Range Networks Inc. 2011
 	
 \bibitem{bib:3gpp0406} 3GPP specification 0406 \textit{Mobile Station - Base Stations System (MS - BSS) Interface Data Link (DL) Layer Specification}:
 \url{http://www.3gpp.org/ftp/Specs/html-info/0406.htm}, Version 8.4.0
-	
+
+\bibitem{bib:openbtshandover} github Repository OpenBTS Handover Erweiterung:
+\url{https://github.com/twaldecker/Mobile_Netze_HM_OpenBTS_Handover}, Abgerufen am 18.03.2012
+
 
 
 \end{thebibliography}

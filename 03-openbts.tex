@@ -299,7 +299,7 @@ In der Regel müssen keine weiteren Einstellungen vorgenommen werden, solange ma
 \subsubsection{Smqueue}
 Auch an der Konfiguration von \textit{smqueue} muss zwangsläufig keine Änderung vorgenommen werden. Allerdings enthält die Konfigurationsdatenbank (\verb|/etc/OpenBTS/smqueue.db|) weitaus mehr Einträge als die von sipauthserve. Gut die Hälfte dieser Parameter beziehen sich auf die "`Short Code"'-Funktionalität.
 
-\subsubsection{Asterisk}
+\subsubsection{Asterisk}\label{sec:asterisk}
 Die Konfiguration von Asterisk beschränkt sich in diesem Dokument auf die Intra-BTS-Kommunikation, d.h. es können nur Gespräche zwischen MS und MS bzw. MS und Asterisk-Diensten (Echo-Test, VoiceMail) stattfinden, nicht jedoch von oder nach außerhalb (Festnetz, andere SIP-Teilnehmer) telefoniert werden.
 \begin{itemize}
 \item \textbf{Teilnehmereintrag}\\\label{asterisk_teilnehmer}Damit die MS untereinander telefonieren können, müssen die Asterisk-Konfigurationsdateien \verb|sip.conf| und \verb|extensions.conf| im Verzeichnis \verb|/etc/asterisk/| angepasst werden. Als Beispiel wird die \textbf{IMSI 001010000000000} verwendet und dieser die Teilnehmerrufnummer \textbf{2101} zugeordnet.\\

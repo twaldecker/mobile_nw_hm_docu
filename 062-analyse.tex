@@ -4,6 +4,13 @@
 \subsubsection{Tracen auf dem Um Interface mit einem Nokia 3310}\label{sec:umtrace}
 Das Um Interface kann mit einem Nokia 3310 Mobiltelefon und einem dazugehörigen Adapter, der zwischen den Akku und das Telefon gesteckt wird und auf die vier Kontakte des internen Telefonbus zugreift getraced werden.
 
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.6\textwidth]{img/nokia-trace}
+	\caption{Adapter für ein Nokia 3310 um das Um Interface zu tracen}
+	\label{fig:nokia-trace}
+\end{figure}
+
 Im Adapterkabel ist ein USB-zu-Seriell Wandler integriert. In die Konfigurationsdatei muss deshalb das Device des USB-Seriell Wandlers eingetragen werden (Siehe Listing \ref{config:gammu}).
 
 \begin{lstlisting}[label=config:gammu,caption={Konfigurationsdatei für gammu und dem verwendeten Adapter}]
@@ -58,9 +65,9 @@ $ patch -p1 < $OPENBSC_DIR/wireshark/0006-abis_oml-hsl.patch
 \subsubsection{Aufbau und Durchführung}
 In einem Raum (Mobile Netze Labor) wurde an zwei Ecken jeweils eine nanoBTS gelegt und per Ethernet mit dem Laborrechner verbunden. Auf dem Rechner wurde OpenBSC gemäß Kapitel \ref{sec:openbsc} konfiguriert. Durch hin und hergehen zwischen den beiden \gls{bts} während eines Anrufs soll das OpenBSC Handover auslösen.
 
-Während des Handovers wurde das Um Interface (siehe Kapitel \ref{sec:umtrace}) und das Abis Interface (siehe Kapitel \ref{sec:abistrace}) getraced.
+Während des Anrufs wurde das Um Interface (siehe Kapitel \ref{sec:umtrace}) und das Abis Interface (siehe Kapitel \ref{sec:abistrace}) getraced um die Handover aufzunehmen.
 
-Abbildung \ref{fig:adhandover} zeigt das Ablaufdiagramm eines Handovers. in den Folgenden zwei Abschnitten werden die zwei Traces untersucht. 
+Abbildung \ref{fig:adhandover} zeigt das Ablaufdiagramm eines Handovers. In den Folgenden zwei Abschnitten werden die zwei Traces untersucht. 
 
 \subsubsection{Ablauf Handover auf dem Um Interface}\label{sec:obsc-um}
 
